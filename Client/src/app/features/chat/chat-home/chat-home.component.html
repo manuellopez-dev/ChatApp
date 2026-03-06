@@ -1,0 +1,159 @@
+<div class="chat-app">
+
+  <!-- ── Sidebar ───────────────────────────────────────────── -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <span class="app-logo">💬</span>
+      <span class="app-name">ChatApp</span>
+    </div>
+
+    <div class="user-info">
+      <span class="user-avatar">{{ currentUser?.avatar }}</span>
+      <div>
+        <span class="user-name">{{ currentUser?.username }}</span>
+        <span class="user-status">
+          <span class="status-dot"></span> En línea
+        </span>
+      </div>
+    </div>
+
+    <div class="rooms-header">
+      <span>Salas</span>
+      <button class="add-room-btn" (click)="showCreateRoom = !showCreateRoom" matTooltip="Nueva sala">
+        <mat-icon>add</mat-icon>
+      </button>
+    </div>
+
+    <!-- Crear sala -->
+    <div class="create-room-form" *ngIf="showCreateRoom">
+      <input class="room-input" type="text" placeholder="Nombre de la sala"
+        [(ngModel)]="newRoomName" (keyup.enter)="createRoom()"/>
+      <input class="room-input" type="text" placeholder="Descripción (opcional)"
+        [(ngModel)]="newRoomDesc"/>
+      <div class="create-room-actions">
+        <button class="btn-cancel" (click)="showCreateRoom = false">Cancelar</button>
+        <button class="btn-create" (click)="createRoom()">Crear</button>
+      </div>
+    </div>
+
+    <!-- Lista de salas -->
+    <div class="rooms-list">
+      <div *ngFor="let room of rooms"
+        class="room-item"
+        [class.active]="activeRoom?.id === room.id"
+        (click)="selectRoom(room)">
+        <span class="room-hash">#</span>
+        <div class="room-info">
+          <span class="room-name">{{ room.name }}</span>
+          <span class="room-desc" *ngIf="room.description">{{ room.description }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Usuarios online -->
+<div class="online-section">
+  <div class="rooms-header">
+    <span>En línea — {{ onlineUsers.length }}</span>
+  </div>
+  <div class="online-list">
+    <div *ngFor="let u of onlineUsers" class="online-user-item">
+      <span class="online-user-avatar">{{ u.avatar }}</span>
+      <span class="online-user-name">{{ u.username }}</span>
+      <span class="online-dot"></span>
+    </div>
+  </div>
+</div>
+
+    <div class="sidebar-footer">
+      <button class="logout-btn" (click)="logout()">
+        <mat-icon>logout</mat-icon>
+        Cerrar sesión
+      </button>
+    </div>
+  </aside>
+
+  <!-- ── Chat principal ────────────────────────────────────── -->
+  <main class="chat-main" *ngIf="activeRoom; else noRoom">
+
+    <header class="chat-header">
+      <div class="chat-header-info">
+        <span class="chat-hash">#</span>
+        <div>
+          <h2 class="chat-room-name">{{ activeRoom.name }}</h2>
+          <p class="chat-room-desc" *ngIf="activeRoom.description">{{ activeRoom.description }}</p>
+        </div>
+      </div>
+      <div class="chat-header-meta">
+        <span class="online-count">
+          <span class="status-dot"></span>
+          {{ onlineUsers.length }} en línea
+        </span>
+      </div>
+    </header>
+
+    <!-- Mensajes -->
+    <div class="messages-list">
+      <div *ngIf="loading" class="messages-loading">
+        <mat-spinner diameter="32"></mat-spinner>
+      </div>
+
+      <div *ngIf="!loading && messages.length === 0" class="messages-empty">
+        <mat-icon>chat_bubble_outline</mat-icon>
+        <p>Sin mensajes aún. ¡Sé el primero en escribir!</p>
+      </div>
+
+      <div *ngFor="let msg of messages; let i = index"
+  class="message-wrap"
+  [class.own]="isOwn(msg)"
+  [class.grouped]="i > 0 && messages[i-1].user.id === msg.user.id">
+
+  <span class="msg-avatar" *ngIf="!isOwn(msg) && (i === 0 || messages[i-1].user.id !== msg.user.id)">
+    {{ msg.user.avatar }}
+  </span>
+  <span class="msg-avatar placeholder" *ngIf="!isOwn(msg) && i > 0 && messages[i-1].user.id === msg.user.id">
+  </span>
+
+  <div class="message-bubble">
+    <span class="msg-username" *ngIf="!isOwn(msg) && (i === 0 || messages[i-1].user.id !== msg.user.id)">
+      {{ msg.user.username }}
+    </span>
+    <p class="msg-content">{{ msg.content }}</p>
+    <span class="msg-time">{{ formatTime(msg.created_at) }}</span>
+  </div>
+
+  <span class="msg-avatar own-avatar" *ngIf="isOwn(msg) && (i === 0 || messages[i-1].user.id !== msg.user.id)">
+    {{ msg.user.avatar }}
+  </span>
+  <span class="msg-avatar placeholder" *ngIf="isOwn(msg) && i > 0 && messages[i-1].user.id === msg.user.id">
+  </span>
+</div>
+    </div>
+
+    <!-- Typing indicator -->
+<div class="typing-indicator" *ngIf="typingUsers.length > 0">
+  <span class="typing-dots">
+    <span></span><span></span><span></span>
+  </span>
+  <span class="typing-text">
+    {{ typingUsers[0].username }} está escribiendo...
+  </span>
+</div>
+
+    <!-- Input -->
+    <app-message-input
+      [roomName]="activeRoom.name"
+      [roomId]="activeRoom.id"
+      (messageSent)="onSendMessage($event)">
+    </app-message-input>
+
+  </main>
+
+  <ng-template #noRoom>
+    <main class="chat-empty">
+      <mat-icon>forum</mat-icon>
+      <h2>Selecciona una sala</h2>
+      <p>Elige una sala del panel izquierdo para empezar a chatear</p>
+    </main>
+  </ng-template>
+
+</div>

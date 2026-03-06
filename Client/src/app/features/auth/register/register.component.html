@@ -1,0 +1,53 @@
+<div class="auth-wrapper">
+  <div class="auth-card">
+    <div class="auth-header">
+      <div class="auth-logo">💬</div>
+      <h1>ChatApp</h1>
+      <p>Crea tu cuenta</p>
+    </div>
+
+    <form [formGroup]="form" class="auth-form">
+
+      <!-- Avatar -->
+      <div class="avatar-section">
+        <p class="avatar-label">Elige tu avatar</p>
+        <div class="avatar-grid">
+          <button *ngFor="let a of avatars" type="button"
+            class="avatar-btn" [class.active]="selected === a"
+            (click)="selectAvatar(a)">
+            {{ a }}
+          </button>
+        </div>
+      </div>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Nombre de usuario</mat-label>
+        <input matInput formControlName="username" placeholder="ej: luislopez"/>
+        <mat-error>Mínimo 3 caracteres</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Email</mat-label>
+        <input matInput type="email" formControlName="email" placeholder="tu@email.com"/>
+        <mat-error>Email inválido</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Contraseña</mat-label>
+        <input matInput type="password" formControlName="password" placeholder="Mínimo 6 caracteres"/>
+        <mat-error>Mínimo 6 caracteres</mat-error>
+      </mat-form-field>
+
+      <button mat-raised-button color="primary" class="full-width submit-btn"
+        (click)="onSubmit()" [disabled]="loading || form.invalid">
+        <mat-spinner *ngIf="loading" diameter="20"></mat-spinner>
+        <span *ngIf="!loading">Crear cuenta</span>
+      </button>
+    </form>
+
+    <p class="auth-footer">
+      ¿Ya tienes cuenta?
+      <a routerLink="/auth/login">Inicia sesión</a>
+    </p>
+  </div>
+</div>

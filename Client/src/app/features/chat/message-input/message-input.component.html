@@ -1,0 +1,16 @@
+<div class="input-wrap">
+  <div class="input-box">
+    <textarea
+      class="message-textarea"
+      [placeholder]="'Mensaje en #' + roomName"
+      [(ngModel)]="message"
+      (input)="onInput()"
+      (keydown)="onEnter($event)"
+      rows="1">
+    </textarea>
+    <button class="send-btn" (click)="send()" [disabled]="!message.trim()" matTooltip="Enviar">
+      <mat-icon>send</mat-icon>
+    </button>
+  </div>
+  <p class="input-hint">Enter para enviar · Shift+Enter para nueva línea</p>
+</div>

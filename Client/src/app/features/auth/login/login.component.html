@@ -1,0 +1,34 @@
+<div class="auth-wrapper">
+  <div class="auth-card">
+    <div class="auth-header">
+      <div class="auth-logo">💬</div>
+      <h1>ChatApp</h1>
+      <p>Inicia sesión para continuar</p>
+    </div>
+
+    <form [formGroup]="form" class="auth-form">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Email</mat-label>
+        <input matInput type="email" formControlName="email" placeholder="tu@email.com"/>
+        <mat-error>Email inválido</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Contraseña</mat-label>
+        <input matInput type="password" formControlName="password" placeholder="••••••"/>
+        <mat-error>La contraseña es obligatoria</mat-error>
+      </mat-form-field>
+
+      <button mat-raised-button color="primary" class="full-width submit-btn"
+        (click)="onSubmit()" [disabled]="loading || form.invalid">
+        <mat-spinner *ngIf="loading" diameter="20"></mat-spinner>
+        <span *ngIf="!loading">Entrar</span>
+      </button>
+    </form>
+
+    <p class="auth-footer">
+      ¿No tienes cuenta?
+      <a routerLink="/auth/register">Regístrate</a>
+    </p>
+  </div>
+</div>
